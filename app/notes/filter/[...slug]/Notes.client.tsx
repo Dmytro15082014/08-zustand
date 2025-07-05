@@ -21,7 +21,7 @@ const NotesClient = ({ items, initialTag }: Props) => {
   const [search, setSearch] = useState<string>("");
   const [debouncedSearch] = useDebounce(search, 300);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const tag = initialTag === "All Notes" ? undefined : initialTag;
+  const tag = initialTag === "All" ? undefined : initialTag;
   const { data, isSuccess } = useQuery({
     queryKey: ["note", debouncedSearch, page, tag],
     queryFn: () => fetchNotes(debouncedSearch, page, tag),

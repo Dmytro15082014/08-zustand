@@ -11,6 +11,28 @@ type Props = {
   params: Promise<{ id: string }>;
 };
 
+export async function generateMetadata({ params }: Props) {
+  const { id } = await params;
+  const { title, content } = await fetchNoteById(Number(id));
+  return {
+    title,
+    description: content.slice(0, 30),
+    openGraph: {
+      title,
+      description: content.slice(0, 30),
+      url: "http://localhost:3000",
+      images: [
+        {
+          url: "https://ac.goit.global/fullstack/react/notehub-og-meta.jpg",
+          width: 1200,
+          height: 630,
+          alt: "logo NoteHub",
+        },
+      ],
+    },
+  };
+}
+
 const NoteItem = async ({ params }: Props) => {
   const { id } = await params;
   const queryClient = new QueryClient();

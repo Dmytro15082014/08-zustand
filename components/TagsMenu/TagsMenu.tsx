@@ -2,6 +2,7 @@
 import { useState } from "react";
 import css from "./TagsMenu.module.css";
 import Link from "next/link";
+import useEscapeClose from "@/hooks/useEscapeClose";
 
 const allTag: string[] = [
   "All",
@@ -18,6 +19,8 @@ export const TagsMenu = () => {
   const handleOpenMenu = () => {
     setIsOpenMenu(!isOpenMenu);
   };
+
+  useEscapeClose(handleOpenMenu);
   return (
     <div className={css.menuContainer}>
       <button className={css.menuButton} onClick={handleOpenMenu}>
