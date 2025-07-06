@@ -20,9 +20,9 @@ export const TagsMenu = () => {
     setIsOpenMenu(!isOpenMenu);
   };
 
-  useEscapeClose(handleOpenMenu);
+  useEscapeClose(handleOpenMenu, "tagMenu");
   return (
-    <div className={css.menuContainer}>
+    <div className={css.menuContainer} id="tagMenu">
       <button className={css.menuButton} onClick={handleOpenMenu}>
         Notes ▾
       </button>

@@ -1,51 +1,50 @@
-import { useId } from 'react';
-import css from './NoteForm.module.css';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
-import type { NoteInput } from '../../types/note';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createNote } from '../../lib/api';
-import toast from 'react-hot-toast';
-
-interface NoteFormProps {
-  cancel: () => void;
-}
+"use client";
+import { useId } from "react";
+import css from "./NoteForm.module.css";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import type { NoteInput } from "../../types/note";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createNote } from "../../lib/api";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const initValues: NoteInput = {
-  title: '',
-  content: '',
-  tag: 'Todo',
+  title: "",
+  content: "",
+  tag: "Todo",
 };
 
 const NoteSchema = Yup.object().shape({
   title: Yup.string()
-    .min(3, 'Title must be at least 3 characters')
-    .max(50, 'Title is too long')
-    .required('Title is required'),
-  content: Yup.string().max(500, 'Content is too long'),
+    .min(3, "Title must be at least 3 characters")
+    .max(50, "Title is too long")
+    .required("Title is required"),
+  content: Yup.string().max(500, "Content is too long"),
   tag: Yup.string().oneOf(
-    ['Todo', 'Work', 'Personal', 'Meeting', 'Shopping'],
-    'Invalid tag'
+    ["Todo", "Work", "Personal", "Meeting", "Shopping"],
+    "Invalid tag"
   ),
 });
 
-export default function NoteForm({ cancel }: NoteFormProps) {
+export default function NoteForm() {
   const fieldId = useId();
+  const router = useRouter();
 
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: (newNote: NoteInput) => createNote(newNote),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['note'] });
-      cancel();
+      queryClient.invalidateQueries({ queryKey: ["note"] });
+      router.back();
     },
     onError: () => {
-      toast.error('The Note didn`t create.. Try again!');
+      toast.error("The Note didn`t create.. Try again!");
     },
   });
 
   const handleCancel = () => {
-    cancel();
+    router.back();
   };
 
   const noteFormSubmit = (values: NoteInput) => {
@@ -117,7 +116,7 @@ export default function NoteForm({ cancel }: NoteFormProps) {
               className={css.submitButton}
               disabled={isPending}
             >
-              {isPending ? 'Creating new note...' : 'Create note'}
+              {isPending ? "Creating new note..." : "Create note"}
             </button>
           </div>
         </Form>
