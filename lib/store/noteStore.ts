@@ -7,7 +7,8 @@ type NoteDraftStore = {
   setDraft: (newNoteDraft: NoteInput) => void;
   clearDraft: () => void;
 };
-const initValues: NoteInput = {
+
+const initialDraft: NoteInput = {
   title: "",
   content: "",
   tag: "Todo",
@@ -17,12 +18,12 @@ export const useNoteDraft = create<NoteDraftStore>()(
   persist(
     (set) => {
       return {
-        draft: initValues,
+        draft: initialDraft,
         setDraft: (newNoteDraft: NoteInput) => {
           return set({ draft: newNoteDraft });
         },
         clearDraft: () => {
-          return set({ draft: initValues });
+          return set({ draft: initialDraft });
         },
       };
     },

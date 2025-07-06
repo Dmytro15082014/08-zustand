@@ -9,12 +9,6 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useNoteDraft } from "@/lib/store/noteStore";
 
-export const initValues: NoteInput = {
-  title: "",
-  content: "",
-  tag: "Todo",
-};
-
 const NoteSchema = Yup.object().shape({
   title: Yup.string()
     .min(3, "Title must be at least 3 characters")
@@ -39,7 +33,7 @@ export default function NoteForm() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["note"] });
       clearDraft();
-      router.push("/notes/filter/All");
+      router.back();
     },
     onError: () => {
       toast.error("The Note didn`t create.. Try again!");
@@ -47,8 +41,7 @@ export default function NoteForm() {
   });
 
   const handleCancel = () => {
-    clearDraft();
-    router.push("/notes/filter/All");
+    router.back();
   };
 
   const handleChange = async (
