@@ -51,16 +51,31 @@ export default function NoteForm() {
     router.push("/notes/filter/All");
   };
 
-  const handleChange = (
+  const handleChange = async (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
-    setDraft({ ...draft, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setDraft({ ...draft, [name]: value });
+    try {
+      await (Yup.reach(NoteSchema, name) as Yup.AnySchema).validate(value);
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    } catch (error) {
+      if (error instanceof Yup.ValidationError) {
+        setErrors((prev) => ({ ...prev, [name]: error.message }));
+      }
+    }
   };
 
   const noteFormSubmit = (formData: FormData) => {
     const values = Object.fromEntries(formData) as NoteInput;
+    const hasError = Object.values(errors).some((msg) => msg);
+    const isEmpty = !draft.title && !draft.content;
+    if (isEmpty || hasError) {
+      toast.error("Something went wrong.");
+      return;
+    }
     mutate(values);
   };
 
@@ -76,7 +91,7 @@ export default function NoteForm() {
           defaultValue={draft.title}
           onChange={handleChange}
         />
-        <span className={css.error}></span>
+        {errors.title && <span className={css.error}>{errors.title}</span>}
       </div>
 
       <div className={css.formGroup}>
@@ -89,7 +104,7 @@ export default function NoteForm() {
           defaultValue={draft.content}
           onChange={handleChange}
         />
-        <span className={css.error}></span>
+        {errors.content && <span className={css.error}>{errors.content}</span>}
       </div>
 
       <div className={css.formGroup}>
@@ -107,7 +122,7 @@ export default function NoteForm() {
           <option value="Meeting">Meeting</option>
           <option value="Shopping">Shopping</option>
         </select>
-        <span className={css.error}></span>
+        {errors.tag && <span className={css.error}>{errors.tag}</span>}
       </div>
 
       <div className={css.actions}>
