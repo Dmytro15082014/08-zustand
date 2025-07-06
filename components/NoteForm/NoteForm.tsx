@@ -73,10 +73,11 @@ export default function NoteForm() {
     const hasError = Object.values(errors).some((msg) => msg);
     const isEmpty = !draft.title && !draft.content;
     if (isEmpty || hasError) {
-      toast.error("Something went wrong.");
+      toast.error("The Note didn`t create.. Try again!");
       return;
     }
     mutate(values);
+    clearDraft();
   };
 
   return (
