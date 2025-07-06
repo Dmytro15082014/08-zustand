@@ -15,7 +15,7 @@ interface paramsProps {
 }
 
 axios.defaults.baseURL = "https://notehub-public.goit.study/api";
-const limit = 10;
+const limit = 12;
 
 const headersToken = {
   Authorization: `Bearer ${process.env.NEXT_PUBLIC_NOTEHUB_TOKEN}`,

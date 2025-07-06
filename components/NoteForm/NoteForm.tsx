@@ -7,8 +7,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createNote } from "../../lib/api";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useNoteDraft } from "@/lib/store/noteStore";
 
-const initValues: NoteInput = {
+export const initValues: NoteInput = {
   title: "",
   content: "",
   tag: "Todo",
@@ -29,14 +30,15 @@ const NoteSchema = Yup.object().shape({
 export default function NoteForm() {
   const fieldId = useId();
   const router = useRouter();
-  const [formData, setFormdata] = useState<NoteInput>(initValues);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const { draft, setDraft, clearDraft } = useNoteDraft();
 
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: (newNote: NoteInput) => createNote(newNote),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["note"] });
+      clearDraft();
       router.push("/notes/filter/All");
     },
     onError: () => {
@@ -45,6 +47,7 @@ export default function NoteForm() {
   });
 
   const handleCancel = () => {
+    clearDraft();
     router.push("/notes/filter/All");
   };
 
@@ -53,7 +56,7 @@ export default function NoteForm() {
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >
   ) => {
-    setFormdata({ ...formData, [e.target.name]: e.target.value });
+    setDraft({ ...draft, [e.target.name]: e.target.value });
   };
 
   const noteFormSubmit = (formData: FormData) => {
@@ -70,7 +73,7 @@ export default function NoteForm() {
           type="text"
           name="title"
           className={css.input}
-          defaultValue={initValues.title}
+          defaultValue={draft.title}
           onChange={handleChange}
         />
         <span className={css.error}></span>
@@ -83,7 +86,7 @@ export default function NoteForm() {
           name="content"
           rows={8}
           className={css.textarea}
-          defaultValue={initValues.content}
+          defaultValue={draft.content}
           onChange={handleChange}
         />
         <span className={css.error}></span>
@@ -95,7 +98,7 @@ export default function NoteForm() {
           id={`${fieldId}-tag`}
           name="tag"
           className={css.select}
-          defaultValue={initValues.tag}
+          defaultValue={draft.tag}
           onChange={handleChange}
         >
           <option value="Todo">Todo</option>
