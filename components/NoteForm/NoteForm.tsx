@@ -70,7 +70,6 @@ export default function NoteForm() {
       return;
     }
     mutate(values);
-    clearDraft();
   };
 
   return (
